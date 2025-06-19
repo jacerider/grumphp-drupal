@@ -53,11 +53,26 @@ class GrumPhpConfiguratorPlugin implements PluginInterface, EventSubscriberInter
    * Copies the GrumPHP configuration file to the project root.
    */
   public function configureGrumPhp() {
-    $configFiles = [
+    $filesInit = [
+      '/../../../phpstan.neon' => './phpstan.neon',
+    ];
+    $filesOverwrite = [
       '/../../../grumphp.yml.dist' => './grumphp.yml.dist',
     ];
 
-    foreach ($configFiles as $source => $destination) {
+    foreach ($filesInit as $source => $destination) {
+      if (file_exists($destination)) {
+        continue;
+      }
+      $this->io->write('<fg=green>Copying configuration file...</fg=green>');
+      if (!copy(__DIR__ . $source, $destination)) {
+        $this->io->write('<fg=red>Copying config failed!</fg=red>');
+        continue;
+      }
+      $this->io->write('<fg=green>Copying config success!</fg=green>');
+    }
+
+    foreach ($filesOverwrite as $source => $destination) {
       $this->io->write('<fg=green>Copying configuration file...</fg=green>');
       if (!copy(__DIR__ . $source, $destination)) {
         $this->io->write('<fg=red>Copying config failed!</fg=red>');
