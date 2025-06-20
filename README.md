@@ -9,8 +9,8 @@ composer require --dev jacerider/grumphp-drupal
 ##  Config
 Configure git by the following commands
 ```
-php ./vendor/phpro/grumphp git:init
-php ./vendor/phpro/grumphp git:pre-commit
+php ./vendor/bin/grumphp git:init
+php ./vendor/bin/grumphp git:pre-commit
 ```
 
 ##  Usage
