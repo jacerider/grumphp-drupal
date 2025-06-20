@@ -6,6 +6,7 @@ use GrumPHP\Fixer\Provider\FixableProcessResultProvider;
 use GrumPHP\Runner\TaskResult;
 use GrumPHP\Runner\TaskResultInterface;
 use GrumPHP\Task\AbstractExternalTask;
+use GrumPHP\Task\Config\ConfigOptionsResolver;
 use GrumPHP\Task\Context\ContextInterface;
 use GrumPHP\Task\Context\GitPreCommitContext;
 use GrumPHP\Task\Context\RunContext;
@@ -13,23 +14,22 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Process\Process;
 
 /**
-* The StylelintTask class.
-*/
+ * The StylelintTask class.
+ */
 class StylelintTask extends AbstractExternalTask {
 
   /**
-  * Returns the configurable options.
-  */
-  public static function getConfigurableOptions(): OptionsResolver {
+   * Returns the configurable options.
+   */
+  public static function getConfigurableOptions(): ConfigOptionsResolver {
     $resolver = new OptionsResolver();
     $resolver->setDefaults([
       // Task config options.
       'triggered_by' => ['less', 'sass', 'scss', 'css'],
       'whitelist_patterns' => NULL,
-
       // Stylelint native config options.
       'config' => NULL,
-      'max-warnings' => NULL,
+      'max_warnings' => NULL,
       'quiet' => FALSE,
     ]);
 
@@ -39,29 +39,29 @@ class StylelintTask extends AbstractExternalTask {
 
     // Stylelint native config options.
     $resolver->addAllowedTypes('config', ['null', 'string']);
-    $resolver->addAllowedTypes('max-warnings', ['null', 'integer']);
+    $resolver->addAllowedTypes('max_warnings', ['null', 'integer']);
     $resolver->addAllowedTypes('quiet', ['bool']);
 
-    return $resolver;
+    return ConfigOptionsResolver::fromOptionsResolver($resolver);
   }
 
   /**
-  * Checks if the task can run in the given context.
-  */
+   * Checks if the task can run in the given context.
+   */
   public function canRunInContext(ContextInterface $context): bool {
     return ($context instanceof GitPreCommitContext || $context instanceof RunContext);
   }
 
   /**
-  * Runs the Stylelint task.
-  */
+   * Runs the Stylelint task.
+   */
   public function run(ContextInterface $context): TaskResultInterface {
     $config = $this->getConfig()->getOptions();
 
     $files = $context
-    ->getFiles()
-    ->paths($config['whitelist_patterns'] ?? [])
-    ->extensions($config['triggered_by']);
+      ->getFiles()
+      ->paths($config['whitelist_patterns'] ?? [])
+      ->extensions($config['triggered_by']);
 
     if (0 === \count($files)) {
       return TaskResult::createSkipped($this, $context);
@@ -73,7 +73,7 @@ class StylelintTask extends AbstractExternalTask {
 
     $arguments->addOptionalArgument('--config=%s', $config['config']);
     $arguments->addOptionalArgument('--quiet', $config['quiet']);
-    $arguments->addOptionalIntegerArgument('--max-warnings=%d', $config['max-warnings']);
+    $arguments->addOptionalIntegerArgument('--max-warnings=%d', $config['max_warnings']);
     $arguments->addFiles($files);
 
     $process = $this->processBuilder->buildProcess($arguments);
