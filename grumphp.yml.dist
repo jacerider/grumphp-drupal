@@ -2,9 +2,8 @@ grumphp:
   ascii:
     succeeded: ~
     failed: ~
-  # For local dev using ddev, uncomment this and run `grumphp git:init`
-  # git_hook_variables:
-  #   EXEC_GRUMPHP_COMMAND: 'ddev exec -d /var/www/html'
+  git_hook_variables:
+    EXEC_GRUMPHP_COMMAND: ddev exec php
   tasks:
     git_blacklist:
       keywords:
@@ -27,9 +26,15 @@ grumphp:
 
     stylelint:
       triggered_by: [scss]
-      whitelist_patterns:
-          - /^modules/custom\/(.*)/
-          - /^themes\/(.*)/
+      whitelist_patterns: []
       config: stylelint.config.cjs
-      max-warnings: 5
+      max_warnings: 5
       quiet: false
+
+services:
+  jacerider\GrumPhpDrupal\Tasks\StylelintTask:
+    arguments:
+      - '@process_builder'
+      - '@formatter.raw_process'
+    tags:
+      - { name: grumphp.task, task: stylelint }
