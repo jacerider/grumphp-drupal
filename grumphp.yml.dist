@@ -2,8 +2,8 @@ grumphp:
   ascii:
     succeeded: ~
     failed: ~
-  git_hook_variables:
-    EXEC_GRUMPHP_COMMAND: ddev exec php
+  # git_hook_variables:
+  #   EXEC_GRUMPHP_COMMAND: ddev exec php
   tasks:
     git_blacklist:
       keywords:
