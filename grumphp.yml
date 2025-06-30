@@ -1,0 +1,63 @@
+grumphp:
+  ascii:
+    succeeded: ~
+    failed: ~
+  # git_hook_variables:
+  #   EXEC_GRUMPHP_COMMAND: ddev exec php
+  tasks:
+    git_blacklist:
+      keywords:
+        - 'die;'
+        - 'die('
+        - 'exit;'
+        - 'exit('
+        - 'ksm('
+        - 'kint('
+        - 'phpinfo('
+        - 'print_r('
+        - 'var_dump('
+      triggered_by: ['php', 'module', 'inc', 'install', 'theme']
+      whitelist_patterns:
+        - /^web\/modules\/(.*)/
+        - /^web\/themes\/(.*)/
+      ignore_patterns:
+        - /^web\/modules\/contrib\/(.*)/
+        - /^web\/themes\/contrib\/(.*)/
+
+    phpcs:
+      standard: './vendor/jacerider/grumphp-drupal/src/CodingStandards/Drupal'
+      triggered_by: ['php', 'module', 'inc', 'install', 'theme']
+      whitelist_patterns:
+        - /^web\/modules\/(.*)/
+        - /^web\/themes\/(.*)/
+      ignore_patterns:
+        - /^web\/modules\/contrib\/(.*)/
+        - /^web\/themes\/contrib\/(.*)/
+
+    phpstan:
+      level: 1
+      triggered_by: ['php', 'module', 'inc', 'install', 'theme']
+      memory_limit: '-1'
+      ignore_patterns:
+        - /^vendor\/(.*)/
+        - /^web\/core\/(.*)/
+        - /^web\/libraries\/(.*)/
+        - /^web\/profiles\/(.*)/
+        - /^web\/sites\/(.*)/
+        - /^web\/modules\/contrib\/(.*)/
+        - /^web\/themes\/contrib\/(.*)/
+
+    stylelint:
+      triggered_by: [scss]
+      whitelist_patterns: []
+      config: stylelint.config.cjs
+      max_warnings: 5
+      quiet: false
+
+services:
+  jacerider\GrumPhpDrupal\Tasks\StylelintTask:
+    arguments:
+      - '@process_builder'
+      - '@formatter.raw_process'
+    tags:
+      - { name: grumphp.task, task: stylelint }
