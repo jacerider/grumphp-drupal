@@ -1,9 +1,14 @@
-if command -v lando; then
-  echo "Running GrumPHP tasks in Lando environment"
-  lando php "$@"
-elif command -v ddev; then
+if [ "$PANTHEON_ENVIRONMENT" ]; then
+  echo "Skipping GrumPHP tasks in Pantheon environment"
+  exit 1
+fi
+
+if command -v ddev; then
   echo "Running GrumPHP tasks in DDEV environment"
   ddev php "$@"
+elif command -v lando; then
+  echo "Running GrumPHP tasks in Lando environment"
+  lando php "$@"
 else
   echo "Running GrumPHP tasks in local environment"
   php "$@"
