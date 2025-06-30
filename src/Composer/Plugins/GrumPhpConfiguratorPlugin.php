@@ -57,7 +57,11 @@ class GrumPhpConfiguratorPlugin implements PluginInterface, EventSubscriberInter
       '/../../../phpstan.neon' => './phpstan.neon',
     ];
     $filesOverwrite = [
-      '/../../../grumphp.yml.dist' => './grumphp.yml.dist',
+      '/../../../grumphp.yml' => './grumphp.yml',
+      '/../../../grumphp.sh' => './grumphp.sh',
+    ];
+    $filesPermissions = [
+      './grumphp.sh' => 0755,
     ];
 
     foreach ($filesInit as $source => $destination) {
@@ -79,6 +83,17 @@ class GrumPhpConfiguratorPlugin implements PluginInterface, EventSubscriberInter
         continue;
       }
       $this->io->write('<fg=green>Copying config success!</fg=green>');
+    }
+
+    foreach ($filesPermissions as $file => $mode) {
+      if (file_exists($file)) {
+        $this->io->write('<fg=green>Setting permissions for ' . $file . '...</fg=green>');
+        chmod($file, $mode);
+        $this->io->write('<fg=green>Permissions set!</fg=green>');
+      }
+      else {
+        $this->io->write('<fg=red>File ' . $file . ' does not exist!</fg=red>');
+      }
     }
   }
 
