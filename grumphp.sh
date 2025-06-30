@@ -1,6 +1,6 @@
 if [ "$PANTHEON_ENVIRONMENT" ]; then
   echo "Skipping GrumPHP tasks in Pantheon environment"
-  exit 1
+  exit 0
 fi
 
 if command -v ddev; then
