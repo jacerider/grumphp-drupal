@@ -53,10 +53,8 @@ class GrumPhpConfiguratorPlugin implements PluginInterface, EventSubscriberInter
    * Copies the GrumPHP configuration file to the project root.
    */
   public function configureGrumPhp() {
-    $filesInit = [
+    $files = [
       '/../../../phpstan.neon' => './phpstan.neon',
-    ];
-    $filesOverwrite = [
       '/../../../grumphp.yml' => './grumphp.yml',
       '/../../../grumphp.sh' => './grumphp.sh',
     ];
@@ -64,7 +62,7 @@ class GrumPhpConfiguratorPlugin implements PluginInterface, EventSubscriberInter
       './grumphp.sh' => 0755,
     ];
 
-    foreach ($filesInit as $source => $destination) {
+    foreach ($files as $source => $destination) {
       if (file_exists($destination)) {
         continue;
       }
@@ -74,25 +72,10 @@ class GrumPhpConfiguratorPlugin implements PluginInterface, EventSubscriberInter
         continue;
       }
       $this->io->write('<fg=green>Copying config success!</fg=green>');
-    }
-
-    foreach ($filesOverwrite as $source => $destination) {
-      $this->io->write('<fg=green>Copying configuration file...</fg=green>');
-      if (!copy(__DIR__ . $source, $destination)) {
-        $this->io->write('<fg=red>Copying config failed!</fg=red>');
-        continue;
-      }
-      $this->io->write('<fg=green>Copying config success!</fg=green>');
-    }
-
-    foreach ($filesPermissions as $file => $mode) {
-      if (file_exists($file)) {
-        $this->io->write('<fg=green>Setting permissions for ' . $file . '...</fg=green>');
-        chmod($file, $mode);
+      if (isset($filesPermissions[$destination])) {
+        chmod($destination, $filesPermissions[$destination]);
+        $this->io->write('<fg=green>Setting permissions for ' . $destination . '...</fg=green>');
         $this->io->write('<fg=green>Permissions set!</fg=green>');
-      }
-      else {
-        $this->io->write('<fg=red>File ' . $file . ' does not exist!</fg=red>');
       }
     }
   }
