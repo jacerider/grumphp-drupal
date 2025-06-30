@@ -1,4 +1,5 @@
 if [ "$PANTHEON_ENVIRONMENT" ]; then
+  echo "Skipping GrumPHP tasks in Pantheon environment"
   exit 0
 fi
 
