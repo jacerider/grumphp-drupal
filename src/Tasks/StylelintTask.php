@@ -56,6 +56,13 @@ class StylelintTask extends AbstractExternalTask {
    * Runs the Stylelint task.
    */
   public function run(ContextInterface $context): TaskResultInterface {
+    if (is_executable('stylelint')) {
+      return TaskResult::createSkipped($this, $context, 'Stylelint is not installed.');
+    }
+    if (defined('PANTHEON_ENVIRONMENT')) {
+      return TaskResult::createSkipped($this, $context, 'Stylelint is not supported on Pantheon.');
+    }
+
     $config = $this->getConfig()->getOptions();
 
     $files = $context
