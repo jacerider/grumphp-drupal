@@ -5,6 +5,9 @@ fi
 
 if command -v ddev; then
   echo "Running GrumPHP tasks in DDEV environment"
+  ddev ssh
+  touch .git/COMMIT_EDITMSG
+  exit
   ddev php "$@"
 elif command -v lando; then
   echo "Running GrumPHP tasks in Lando environment"
