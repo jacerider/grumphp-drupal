@@ -5,10 +5,14 @@ fi
 
 if command -v ddev; then
   echo "Running GrumPHP tasks in DDEV environment"
-  ddev ssh
-  touch .git/COMMIT_EDITMSG
-  exit
-  ddev php "$@"
+  HOST_DIR="$(git rev-parse --show-toplevel)"
+  CONTAINER_DIR="/var/www/html"
+  ARGS=()
+  for arg in "$@"; do
+    arg="${arg/$HOST_DIR/$CONTAINER_DIR}"
+    ARGS+=("$arg")
+  done
+  ddev php "${ARGS[@]}"
 elif command -v lando; then
   echo "Running GrumPHP tasks in Lando environment"
   lando php "$@"
